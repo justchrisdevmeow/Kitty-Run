@@ -18,9 +18,7 @@ jobs:
         node-version: '18'
     
     - name: Install love.js
-      run: |
-        npm install -g love.js
-        npm install -g love-web-builder
+      run: npm install -g love.js
     
     - name: Create .love file
       run: |
@@ -28,10 +26,10 @@ jobs:
         zip -r ../game.love .
         cd ..
     
-    - name: Build to Web with love.js
+    - name: Build to Web
       run: |
         mkdir -p web
-        love.js game.love web -t KittyRun
+        npx love.js game.love web -t KittyRun
         ls -la web
     
     - name: Upload artifact
