@@ -27,12 +27,8 @@ jobs:
     
     - name: Build to Web
       run: |
-        git clone https://github.com/Davidobot/love.js.git
-        cd love.js
-        npm install
-        cd ..
-        node love.js/love.js game.love web
-        ls -la web
+         love.js game.love . -c
+         ls -la
 
     - name: Debug
       run: |
