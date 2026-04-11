@@ -23,13 +23,21 @@ jobs:
     - name: Create .love file
       run: |
         zip -r game.love . -x "*.git*" -x ".github/*"
+        ls -la  # Debug: show files
     
     - name: Build to Web
       run: |
-        love.js game.love web/
+        love.js game.love ./
+        ls -la  # Debug: show output
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: kitty-run-web
-        path: web/
+        path: |
+          *.html
+          *.js
+          *.wasm
+          *.data
+          *.symbols
+        if-no-files-found: warn
