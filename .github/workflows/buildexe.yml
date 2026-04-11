@@ -1,0 +1,35 @@
+name: Build Love2D EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download Love2D 11.5
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip" -OutFile "love.zip"
+        Expand-Archive love.zip -DestinationPath love
+    
+    - name: Create .love file
+      run: |
+        cd KittyRun
+        Compress-Archive -Path * -DestinationPath ../game.love
+        cd ..
+    
+    - name: Build EXE
+      run: |
+        copy love/love-11.5-win64/love.exe KittyRun.exe
+        copy /b KittyRun.exe + game.love KittyRun.exe
+    
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: KittyRun-Windows
+        path: KittyRun.exe
