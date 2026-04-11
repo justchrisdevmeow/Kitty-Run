@@ -1,0 +1,35 @@
+name: Build Love2D to Web
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install love.js
+      run: npm install -g love.js
+    
+    - name: Create .love file
+      run: |
+        zip -r game.love . -x "*.git*" -x ".github/*"
+    
+    - name: Build to Web
+      run: |
+        love.js game.love web/
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: kitty-run-web
+        path: web/
