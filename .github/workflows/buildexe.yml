@@ -20,7 +20,7 @@ jobs:
     - name: Create .love file
       run: |
         cd KittyRun
-        Compress-Archive -Path * -DestinationPath ../game.love
+        Compress-Archive -Path * -DestinationPath ../game.love -Force
         cd ..
     
     - name: Build EXE
