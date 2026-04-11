@@ -26,10 +26,13 @@ jobs:
         ls -la  # Debug: show files
     
     - name: Build to Web
-      uses: MikuAuahDark/love-js-action@v1
-      with:
-        love-file: game.love
-        output-dir: web
+      run: |
+        git clone https://github.com/Davidobot/love.js.git
+        cd love.js
+        npm install
+        cd ..
+        node love.js/love.js game.love web
+        ls -la web
 
     - name: Debug
       run: |
