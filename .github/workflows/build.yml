@@ -27,8 +27,13 @@ jobs:
     
     - name: Build to Web
       run: |
-        love.js game.love ./
-        ls -la  # Debug: show output
+        love.js game.love web
+        ls -la web
+
+    - name: Debug
+      run: |
+        file game.love
+        love.js --version
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
