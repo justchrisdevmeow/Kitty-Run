@@ -26,9 +26,10 @@ jobs:
         ls -la  # Debug: show files
     
     - name: Build to Web
-      run: |
-        love.js game.love web
-        ls -la web
+      uses: MikuAuahDark/love-js-action@v1
+      with:
+        love-file: game.love
+        output-dir: web
 
     - name: Debug
       run: |
