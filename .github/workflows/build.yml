@@ -18,31 +18,24 @@ jobs:
         node-version: '18'
     
     - name: Install love.js
-      run: npm install -g love.js
+      run: |
+        npm install -g love.js
+        npm install -g love-web-builder
     
     - name: Create .love file
       run: |
-        zip -r game.love . -x "*.git*" -x ".github/*"
-        ls -la  # Debug: show files
+        cd KittyRun
+        zip -r ../game.love .
+        cd ..
     
-    - name: Build to Web
+    - name: Build to Web with love.js
       run: |
-        love.js game.love game -c
-        ls -la
-
-    - name: Debug
-      run: |
-        file game.love
-        love.js --version
+        mkdir -p web
+        love.js game.love web -t KittyRun
+        ls -la web
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: kitty-run-web
-        path: |
-          *.html
-          *.js
-          *.wasm
-          *.data
-          *.symbols
-        if-no-files-found: warn
+        path: web/
