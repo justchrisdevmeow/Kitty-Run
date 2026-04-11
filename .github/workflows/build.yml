@@ -27,8 +27,8 @@ jobs:
     
     - name: Build to Web
       run: |
-         love.js game.love . -c
-         ls -la
+        love.js game.love game -c
+        ls -la
 
     - name: Debug
       run: |
