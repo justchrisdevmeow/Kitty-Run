@@ -3,6 +3,13 @@ function love.load()
     love.audio.setVolume(1)
     love.window.setTitle("Kitty Run")
     
+    -- SPLASH SCREEN
+    splash = {}
+    splash.image = love.graphics.newImage("assets/images/splash.png")
+    splash.timer = 0
+    splash.active = true
+    splash.duration = 3
+    
     function createCollisionMap(imgPath)
         local imgData = love.image.newImageData(imgPath)
         local width = imgData:getWidth()
@@ -52,9 +59,8 @@ function love.load()
         love.audio.newSource("assets/sounds/death3.mp3", "static"),
         love.audio.newSource("assets/sounds/death4.mp3", "static")
     }
-
-    for i = 1, #deathSounds do
-        deathSounds[i]:setVolume(0.5)  -- 50% volume
+    for _, sound in ipairs(deathSounds) do
+        sound:setVolume(0.5)
     end
     
     cat_data = {
@@ -92,16 +98,27 @@ function love.load()
     spawnTimer = 0
     
     love.window.setMode(800, 600)
+    
+    -- Ensure splash is active on fresh launch
+    splash.active = true
+    splash.timer = 0
 end
 
 function love.update(dt)
     if dt > 0.033 then dt = 0.033 end
+    
+    -- SPLASH UPDATE
+    if splash.active then
+        splash.timer = splash.timer + dt
+        if splash.timer >= splash.duration then
+            splash.active = false
+        end
+        return
+    end
+    
     if gameOver then return end
     
     if not started then
-        if love.keyboard.isDown("space") then
-            started = true
-        end
         return
     end
     
@@ -216,6 +233,14 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- SPLASH DRAW
+    if splash.active then
+        local w = splash.image:getWidth()
+        local h = splash.image:getHeight()
+        love.graphics.draw(splash.image, 400 - w/2, 300 - h/2)
+        return
+    end
+    
     if bg then
         local bx = (800 - bg_width) / 2
         local by = (600 - bg_height) / 2
@@ -244,54 +269,78 @@ function love.draw()
     love.graphics.setNewFont(24)
     love.graphics.print("Score: " .. math.floor(score), 20, 20)
     
+    -- POLISHED START SCREEN
+        -- POLISHED START SCREEN
+        -- POLISHED START SCREEN
     if not started and not gameOver then
-        love.graphics.setColor(0, 0, 0, 0.75)
-        love.graphics.rectangle("fill", 0, 0, 800, 600)
-        
-        love.graphics.setColor(1, 1, 0.5)
-        love.graphics.setNewFont(48)
-        local title = "Kitty Run"
-        local tw = love.graphics.getFont():getWidth(title)
-        love.graphics.print(title, 400 - tw/2, 180)
-        
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.setNewFont(24)
-        local instr = "Press SPACE to Start"
-        local iw = love.graphics.getFont():getWidth(instr)
-        love.graphics.print(instr, 400 - iw/2, 280)
-        
-        love.graphics.setNewFont(18)
-        local jump = "Press SPACE to jump over obstacles"
-        local jw = love.graphics.getFont():getWidth(jump)
-        love.graphics.print(jump, 400 - jw/2, 340)
-        
-        local score_text = "Collect points by surviving longer"
-        local sw = love.graphics.getFont():getWidth(score_text)
-        love.graphics.print(score_text, 400 - sw/2, 370)
-        
-        love.graphics.setNewFont(14)
-        local restart = "Press R to restart after game over"
-        local rw = love.graphics.getFont():getWidth(restart)
-        love.graphics.print(restart, 400 - rw/2, 420)
-    end
-    
-    if gameOver then
         love.graphics.setColor(0, 0, 0, 0.85)
         love.graphics.rectangle("fill", 0, 0, 800, 600)
         
+        -- Title (bigger, higher up)
+        love.graphics.setFont(love.graphics.newFont(72))
+        local title = "Kitty Run"
+        local tw = love.graphics.getFont():getWidth(title)
+        
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.print(title, 400 - tw/2 + 3, 120 + 3)
+        love.graphics.setColor(1, 0.8, 0.3)
+        love.graphics.print(title, 400 - tw/2, 120)
+        
+        -- Subtitle
+        love.graphics.setFont(love.graphics.newFont(20))
+        local sub = "A purr-fect endless runner"
+        local sw = love.graphics.getFont():getWidth(sub)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.print(sub, 400 - sw/2, 210)
+        
+        -- Start instruction (no flash)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.setFont(love.graphics.newFont(28))
+        local instr = "PRESS SPACE TO START"
+        local iw = love.graphics.getFont():getWidth(instr)
+        love.graphics.print(instr, 400 - iw/2, 290)
+        
+        -- Controls (centered individually)
+        love.graphics.setFont(love.graphics.newFont(18))
+        love.graphics.setColor(1, 1, 1, 0.9)
+        
+        local controlsTitle = "CONTROLS:"
+        local ctW = love.graphics.getFont():getWidth(controlsTitle)
+        love.graphics.print(controlsTitle, 400 - ctW/2, 370)
+        
+        local jumpText = "SPACE = Jump"
+        local jtW = love.graphics.getFont():getWidth(jumpText)
+        love.graphics.print(jumpText, 400 - jtW/2, 400)
+        
+        local restartText = "R = Restart (when game over)"
+        local rtW = love.graphics.getFont():getWidth(restartText)
+        love.graphics.print(restartText, 400 - rtW/2, 430)
+        
+        -- Made by
+        love.graphics.setColor(0.7, 0.7, 0.7)
+        love.graphics.setFont(love.graphics.newFont(12))
+        local made = "Made by justdev-chris"
+        local mw = love.graphics.getFont():getWidth(made)
+        love.graphics.print(made, 400 - mw/2, 560)
+    end
+    
+        if gameOver then
+        love.graphics.setColor(0, 0, 0, 0.85)
+        love.graphics.rectangle("fill", 0, 0, 800, 600)
+        
+        love.graphics.setFont(love.graphics.newFont(48))
         love.graphics.setColor(1, 0.3, 0.3)
-        love.graphics.setNewFont(48)
         local text = "GAME OVER"
         local w = love.graphics.getFont():getWidth(text)
         love.graphics.print(text, 400 - w/2, 200)
         
+        love.graphics.setFont(love.graphics.newFont(32))
         love.graphics.setColor(1, 1, 1)
-        love.graphics.setNewFont(32)
         local scoreText = "Score: " .. math.floor(score)
         local sw = love.graphics.getFont():getWidth(scoreText)
         love.graphics.print(scoreText, 400 - sw/2, 280)
         
-        love.graphics.setNewFont(20)
+        love.graphics.setFont(love.graphics.newFont(20))
         local restartText = "Press R to restart"
         local rw = love.graphics.getFont():getWidth(restartText)
         love.graphics.print(restartText, 400 - rw/2, 360)
@@ -299,10 +348,26 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == "r" and gameOver then
+    -- SPLASH: skip to start screen
+    if splash.active then
+        splash.active = false
+        return
+    end
+    
+    -- GAME OVER: restart to start screen (no splash)
+    if gameOver and key == "r" then
         for _, sound in ipairs(deathSounds) do
             sound:stop()
         end
         love.load()
+        gameOver = false
+        started = false
+        splash.active = false
+        return
+    end
+    
+    -- START SCREEN: space starts game
+    if not started and not gameOver and key == "space" then
+        started = true
     end
 end
