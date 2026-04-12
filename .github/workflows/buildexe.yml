@@ -28,11 +28,6 @@ jobs:
         Copy-Item love/love-11.5-win64/love.exe KittyRun.exe
         cmd /c "copy /b KittyRun.exe + game.love KittyRun.exe"
     
-    - name: Add icon to EXE
-      run: |
-        npm install -g rcedit
-        npx rcedit KittyRun.exe --set-icon KittyRun/assets/images/icon.ico
-    
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
