@@ -31,7 +31,7 @@ jobs:
     - name: Add icon to EXE
       run: |
         npm install -g rcedit
-        rcedit KittyRun.exe --set-icon KittyRun/assets/images/icon.ico
+        npx rcedit KittyRun.exe --set-icon KittyRun/assets/images/icon.ico
     
     - name: Upload EXE
       uses: actions/upload-artifact@v4
