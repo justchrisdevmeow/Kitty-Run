@@ -32,11 +32,11 @@ jobs:
         Copy-Item love/love-11.5-win64/*.dll KittyRunGame/
         Copy-Item love/love-11.5-win64/love.exe KittyRunGame/KittyRun.exe
         
-        # Append game.love to the exe
-        cmd /c "copy /b KittyRunGame/KittyRun.exe + game.love KittyRunGame/KittyRun.exe"
+        # Append game.love to the exe using PowerShell
+        Get-Content game.love -AsByteStream | Add-Content KittyRunGame/KittyRun.exe -AsByteStream
         
-        # Optionally delete the .love file from the folder (not needed anymore)
-        Remove-Item KittyRunGame/game.love -ErrorAction SilentlyContinue
+        # Verify file size (debug)
+        Get-ChildItem KittyRunGame/KittyRun.exe
     
     - name: Upload EXE
       uses: actions/upload-artifact@v4
