@@ -52,6 +52,10 @@ function love.load()
         love.audio.newSource("assets/sounds/death3.mp3", "static"),
         love.audio.newSource("assets/sounds/death4.mp3", "static")
     }
+
+    for i = 1, #deathSounds do
+        deathSounds[i]:setVolume(0.5)  -- 50% volume
+    end
     
     cat_data = {
         createCollisionMap("assets/images/cat1.png"),
