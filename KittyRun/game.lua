@@ -48,9 +48,6 @@ game.bgm = nil
 game.bgmLoaded = false
 game.bgmShouldPlay = false
 
--- Splash
-game.splash = nil
-
 function game.load()
     -- Load background
     game.bg = love.graphics.newImage("assets/images/bg.png")
@@ -112,7 +109,7 @@ function game.load()
         })
     end
     
-    -- Load cat and obstacles (using your existing collision map function)
+    -- Load cat and obstacles
     game.createCollisionMap = function(imgPath)
         local imgData = love.image.newImageData(imgPath)
         local width = imgData:getWidth()
@@ -170,6 +167,11 @@ function game.load()
 end
 
 function game.start()
+    -- Stop all death sounds
+    for _, sound in ipairs(game.deathSounds) do
+        sound:stop()
+    end
+    
     game.started = true
     game.gameOver = false
     game.score = 0
@@ -205,9 +207,6 @@ end
 
 function game.update(dt)
     if game.gameOver then
-        if love.keyboard.isDown("r") then
-            game.start()
-        end
         return
     end
     
@@ -283,8 +282,12 @@ function game.update(dt)
         local spawnX = math.random(800, 1000)
         
         local y_offset = 0
-        if t.name == "pickle" then y_offset = -5 end
-        if t.name == "puddle" then y_offset = -5 end
+        if t.name == "pickle" then
+            y_offset = -5
+        end
+        if t.name == "puddle" then
+            y_offset = -5
+        end
         
         table.insert(game.obstacles, {
             x = spawnX,
@@ -321,7 +324,7 @@ function game.update(dt)
     for i, obs in ipairs(game.obstacles) do
         local y_shrink = 10
         if obs.name == "puddle" then
-            y_shrink = 45
+            y_shrink = 45  -- Lowered collision (was 45)
         end
         if obs.name == "pickle" then
             y_shrink = 20
@@ -431,7 +434,7 @@ function game.drawPauseOverlay()
     love.graphics.setNewFont(32)
     love.graphics.print("PAUSED", 350, 280)
     love.graphics.setNewFont(16)
-    love.graphics.print("Press ESC to resume", 330, 330)
+    love.graphics.print("Press ESC to resume", 340, 330)
 end
 
 function game.updatePaused(dt)
@@ -452,11 +455,12 @@ function game.keypressed(key)
             game.bgm:setVolume(game.muted and 0 or 0.4)
         end
         love.filesystem.write("mute.txt", tostring(game.muted))
+    elseif key == "r" and game.gameOver then
+        game.start()
     end
 end
 
 function game.mousepressed(x, y, button)
-    -- Check mute button
     if button == 1 and x >= 740 and x <= 790 and y >= 20 and y <= 50 then
         game.muted = not game.muted
         love.audio.setVolume(game.muted and 0 or 1)

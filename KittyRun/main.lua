@@ -44,7 +44,6 @@ function love.update(dt)
     -- Splash screen update
     if splash.active then
         splash.timer = splash.timer + dt
-        -- Exit when progress reaches 100% AND at least 2 seconds have passed
         if splash.randomProgress >= 1 and splash.timer >= 2 then
             splash.active = false
             menu.activate()
@@ -72,7 +71,7 @@ function love.draw()
         
         -- Loading bar (random pauses)
         if splash.waitFrames <= 0 then
-            splash.randomProgress = splash.randomProgress + math.random(1, 10) / 100
+            splash.randomProgress = splash.randomProgress + math.random(1, 5) / 100
             if splash.randomProgress > 1 then
                 splash.randomProgress = 1
             end
